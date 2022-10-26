@@ -14,18 +14,18 @@ interface HomeProps {}
 
 const Home: React.FC<HomeProps> = () => {
   const [page, setPage] = useState<number>(1);
-  const [cats, setCats] = useState<Cat[]>([]);
 
-  const { isFetching, isError } = useQuery(
-    ["cats", page],
-    () => getCats(page),
-    {
-      ...DEFAULT_QUERY_OPTIONS,
-      onSuccess: (data: Cat[]) => {
-        setCats([...cats, ...data]);
-      },
-    }
-  );
+  const {
+    isFetching,
+    isError,
+    data: catsFromCache,
+  } = useQuery(["cats", page], () => getCats(page), {
+    ...DEFAULT_QUERY_OPTIONS,
+    onSuccess: (data: Cat[]) => {
+      setCats([...cats, ...data]);
+    },
+  });
+  const [cats, setCats] = useState<Cat[]>(catsFromCache ?? []);
 
   const handleLoadMoreButtonClick = () => {
     setPage((prev) => prev + 1);
